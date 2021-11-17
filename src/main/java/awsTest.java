@@ -55,8 +55,6 @@ public class awsTest {
             System.out.println("                                 99. quit                   ");
             System.out.println("------------------------------------------------------------");
             System.out.print("Enter an integer: ");
-            switch(number) {
-            }
         }
     }
 }
