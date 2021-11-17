@@ -32,7 +32,6 @@ public class awsTest {
                 .withRegion("us-east-2") /* check the region at AWS console */
                 .build();
     }
-
     public static void main(String[] args) throws Exception {
         init();
         Scanner menu = new Scanner(System.in);
