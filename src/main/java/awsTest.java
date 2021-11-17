@@ -42,7 +42,7 @@ public class awsTest {
         init();
         Scanner menu = new Scanner(System.in);
         Scanner id_string = new Scanner(System.in);
-        int number = 1;
+        int number = 2;
         while (true) {
             System.out.println("                                                            ");
             System.out.println("                                                            ");
@@ -64,6 +64,10 @@ public class awsTest {
                 case 1:
                     listInstances();
                     break;
+                case 2:
+                    availableZones();
+                    break;
+
             }
             break;
         }
@@ -97,5 +101,25 @@ public class awsTest {
                 done = true;
             }
         }
+    }
+
+    public static void availableZones(){
+
+        DescribeAvailabilityZonesResult zones_response =
+                ec2.describeAvailabilityZones();
+        int zonecount = 0;
+
+        System.out.println("availability zone list :  ");
+        for(AvailabilityZone zone : zones_response.getAvailabilityZones()) {
+            System.out.printf(
+                    "[id] %s [zonename] %s  [region] %s \n",
+
+                    zone.getZoneId(),
+                    zone.getZoneName(),
+                    zone.getRegionName()
+            );
+            zonecount++;
+        }
+        System.out.println("You can access " +zonecount+ " availability zones.");
     }
 }
