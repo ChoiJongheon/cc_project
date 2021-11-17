@@ -56,8 +56,6 @@ public class awsTest {
             System.out.println("------------------------------------------------------------");
             System.out.print("Enter an integer: ");
             switch(number) {
-                case 1:
-                    break;
             }
         }
     }
