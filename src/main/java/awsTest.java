@@ -42,7 +42,7 @@ public class awsTest {
         init();
         Scanner menu = new Scanner(System.in);
         Scanner id_string = new Scanner(System.in);
-        int number = 4;
+        int number = 3;
         while (true) {
             System.out.println("                                                            ");
             System.out.println("                                                            ");
@@ -67,8 +67,12 @@ public class awsTest {
                 case 2:
                     availableZones();
                     break;
+                case 3:
+                    startInstances();
+                    break;
                 case 4:
                     availableRegions();
+                    break;
             }
             break;
         }
@@ -133,5 +137,25 @@ public class awsTest {
                     region.getRegionName(),
                     region.getEndpoint());
         }
+    }
+
+    public static void startInstances(){
+
+        final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
+        System.out.print("Enter your Instance ID : ");
+        Scanner id_string = new Scanner(System.in);
+        String instanceId = id_string.nextLine();
+
+        StartInstancesRequest request = new StartInstancesRequest()
+                .withInstanceIds(instanceId);
+
+        ec2.startInstances(request);
+
+        InstanceStatus status = new InstanceStatus()
+                .withInstanceId(instanceId);
+
+        ec2.describeInstanceStatus();
+
+        System.out.print("Instance Start!");
     }
 }
