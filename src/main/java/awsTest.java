@@ -43,7 +43,7 @@ public class awsTest {
         Scanner menu = new Scanner(System.in);
         Scanner id_string = new Scanner(System.in);
 
-        int number = 5;
+        int number = 7;
         while (true) {
             System.out.println("                                                            ");
             System.out.println("                                                            ");
@@ -76,6 +76,12 @@ public class awsTest {
                     break;
                 case 5:
                     stopInstances();
+                    break;
+                case 6:
+                    createInstances();
+                    break;
+                case 7:
+                    rebootInstances();
             }
             break;
         }
@@ -151,6 +157,7 @@ public class awsTest {
         Scanner id_string = new Scanner(System.in);
         String instanceId = id_string.nextLine();
 
+
         StartInstancesRequest request = new StartInstancesRequest()
                 .withInstanceIds(instanceId);
 
@@ -161,7 +168,7 @@ public class awsTest {
 
         ec2.describeInstanceStatus();
 
-        System.out.print(instanceId + "Instance is Started!");
+        System.out.println(instanceId + " Instance is Started!");
     }
 
     public static void stopInstances(){
@@ -179,5 +186,44 @@ public class awsTest {
 
         System.out.print( instanceId +" Instance is Stopped!");
 
+    }
+
+    public static void createInstances(){
+
+        Scanner amiId = new Scanner(System.in);
+        String ami_id = amiId.nextLine();
+
+        RunInstancesRequest run_request = new RunInstancesRequest()
+                .withImageId(ami_id)
+                .withInstanceType(InstanceType.T1Micro)
+                .withMaxCount(1)
+                .withMinCount(1);
+
+        RunInstancesResult run_response = ec2.runInstances(run_request);
+
+        String reservation_id = run_response.getReservation().getInstances().get(0).getInstanceId();
+
+        CreateTagsRequest tag_request = new CreateTagsRequest()
+                .withResources(reservation_id);
+
+        System.out.printf(
+                "Successfully started EC2 instance %s based on AMI %s",
+                reservation_id, ami_id);
+    }
+
+    public static void rebootInstances() {
+        final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
+
+        System.out.print("Enter your Instance ID : ");
+
+        Scanner id_string = new Scanner(System.in);
+        String instanceId = id_string.nextLine();
+
+        RebootInstancesRequest request = new RebootInstancesRequest()
+                .withInstanceIds(instanceId);
+
+        RebootInstancesResult response = ec2.rebootInstances(request);
+
+        System.out.println(instanceId + " Instance is rebooted!");
     }
 }
