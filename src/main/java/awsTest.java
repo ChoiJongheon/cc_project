@@ -43,7 +43,7 @@ public class awsTest {
         Scanner menu = new Scanner(System.in);
         Scanner id_string = new Scanner(System.in);
 
-        int number = 7;
+        int number = 8;
         while (true) {
             System.out.println("                                                            ");
             System.out.println("                                                            ");
@@ -82,6 +82,10 @@ public class awsTest {
                     break;
                 case 7:
                     rebootInstances();
+                case 8:
+                    listImages();
+                case 99:
+                    break;
             }
             break;
         }
@@ -226,4 +230,25 @@ public class awsTest {
 
         System.out.println(instanceId + " Instance is rebooted!");
     }
+
+    public static void listImages() {
+        System.out.println("Listing Images....");
+        boolean done = false;
+            DescribeImagesRequest request = new DescribeImagesRequest();
+            request.withImageIds("ami-09c22faace9a79e1d");
+            DescribeImagesResult result = ec2.describeImages(request);
+
+            for (Image image : result.getImages()) {
+                System.out.printf(
+                        "[id] %s, " +
+                                "[Name] %s, " +
+                                "[State] %s, " +
+                                "[Owner] %10s, ",
+                        image.getImageId(),
+                        image.getName(),
+                        image.getState(),
+                        image.getOwnerId());
+            }
+            System.out.println();
+        }
 }
