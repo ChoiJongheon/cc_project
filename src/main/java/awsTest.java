@@ -42,7 +42,8 @@ public class awsTest {
         init();
         Scanner menu = new Scanner(System.in);
         Scanner id_string = new Scanner(System.in);
-        int number = 3;
+
+        int number = 5;
         while (true) {
             System.out.println("                                                            ");
             System.out.println("                                                            ");
@@ -73,6 +74,8 @@ public class awsTest {
                 case 4:
                     availableRegions();
                     break;
+                case 5:
+                    stopInstances();
             }
             break;
         }
@@ -142,7 +145,9 @@ public class awsTest {
     public static void startInstances(){
 
         final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
+
         System.out.print("Enter your Instance ID : ");
+
         Scanner id_string = new Scanner(System.in);
         String instanceId = id_string.nextLine();
 
@@ -156,6 +161,23 @@ public class awsTest {
 
         ec2.describeInstanceStatus();
 
-        System.out.print("Instance Start!");
+        System.out.print(instanceId + "Instance is Started!");
+    }
+
+    public static void stopInstances(){
+        final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
+
+        System.out.print("Enter your Instance ID : ");
+
+        Scanner id_string = new Scanner(System.in);
+        String instanceId = id_string.nextLine();
+
+        StopInstancesRequest request = new StopInstancesRequest()
+                .withInstanceIds(instanceId);
+
+        ec2.stopInstances(request);
+
+        System.out.print( instanceId +" Instance is Stopped!");
+
     }
 }
