@@ -256,7 +256,7 @@ public class awsTest {
                         "[id] %s, " +
                                 "[Name] %s, " +
                                 "[State] %s, " +
-                                "[Owner] %10s, ",
+                                "[Owner] %10s ",
                         image.getImageId(),
                         image.getName(),
                         image.getState(),
