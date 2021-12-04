@@ -51,15 +51,16 @@ public class awsTest {
             System.out.println("           Amazon AWS Control Panel using SDK               ");
             System.out.println("                                                            ");
             System.out.println("  Cloud Computing, Computer Science Department              ");
-            System.out.println("                           at Chungbuk National University  ");
+            System.out.println("                   at Chungbuk National University   최종헌   ");
             System.out.println("------------------------------------------------------------");
             System.out.println("  1. list instance                2. available zones         ");
             System.out.println("  3. start instance               4. available regions      ");
             System.out.println("  5. stop instance                6. create instance        ");
             System.out.println("  7. reboot instance              8. list images            ");
+            System.out.println("  9. instance monitoring         10. stop monitoring        ");
             System.out.println("                                 99. quit                   ");
             System.out.println("------------------------------------------------------------");
-            System.out.print("Enter an integer: ");
+            System.out.print("Enter number: ");
 
             switch (menu.nextInt()) {
                 case 1:
@@ -85,6 +86,12 @@ public class awsTest {
                     break;
                 case 8:
                     listImages();
+                    break;
+                case 9:
+                    monitorInstances();
+                    break;
+                case 10:
+                    stopMonitorInstances();
                     break;
                 case 99:
                     return;
@@ -194,10 +201,9 @@ public class awsTest {
     }
 
     public static void createInstances(){
-
+        System.out.print("Write your AMI_id : ");
         Scanner amiId = new Scanner(System.in);
         String ami_id = amiId.nextLine();
-
         RunInstancesRequest run_request = new RunInstancesRequest()
                 .withImageId(ami_id)
                 .withInstanceType(InstanceType.T2Micro)
@@ -208,8 +214,6 @@ public class awsTest {
 
         String reservation_id = run_response.getReservation().getInstances().get(0).getInstanceId();
 
-        CreateTagsRequest tag_request = new CreateTagsRequest()
-                .withResources(reservation_id);
 
         System.out.printf(
                 "Successfully started EC2 instance %s based on AMI %s",
@@ -219,7 +223,7 @@ public class awsTest {
     public static void rebootInstances() {
         final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
 
-        System.out.print("Enter your Instance ID : ");
+        System.out.print("Write your Instance ID : ");
 
         Scanner id_string = new Scanner(System.in);
         String instanceId = id_string.nextLine();
@@ -250,4 +254,27 @@ public class awsTest {
             }
             System.out.println();
         }
+    public static void monitorInstances(){
+        final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
+        System.out.print("write your Instance ID : ");
+        Scanner id_string = new Scanner(System.in);
+        String instanceId = id_string.nextLine();
+
+        MonitorInstancesRequest request = new MonitorInstancesRequest()
+                .withInstanceIds(instanceId);
+        ec2.monitorInstances(request);
+        System.out.printf("%s monitoring enabled ", instanceId);
+    }
+    public static void stopMonitorInstances(){
+        final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
+        System.out.print("write your Instance ID : ");
+        Scanner id_string = new Scanner(System.in);
+        String instanceId = id_string.nextLine();
+
+        UnmonitorInstancesRequest request = new UnmonitorInstancesRequest()
+                .withInstanceIds(instanceId);
+
+        ec2.unmonitorInstances(request);
+        System.out.printf("%s monitoring disabled ", instanceId);
+    }
 }
