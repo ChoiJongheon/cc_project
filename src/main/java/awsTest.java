@@ -341,6 +341,4 @@ public class awsTest {
         DeleteSecurityGroupResult response = ec2.deleteSecurityGroup(request);
         System.out.printf("%s Security group is deleted! ", group_id);
     }
-
-
 }
