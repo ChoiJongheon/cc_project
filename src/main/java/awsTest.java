@@ -3,6 +3,8 @@ import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.*;
+import com.amazonaws.services.ec2.model.CreateSecurityGroupRequest;
+import com.amazonaws.services.ec2.model.CreateSecurityGroupResult;
 
 import java.util.*;
 
@@ -41,9 +43,7 @@ public class awsTest {
     public static void main(String[] args) throws Exception {
         init();
         Scanner menu = new Scanner(System.in);
-        Scanner id_string = new Scanner(System.in);
 
-        int number = 3;
         while (true) {
             System.out.println("                                                            ");
             System.out.println("                                                            ");
@@ -58,7 +58,8 @@ public class awsTest {
             System.out.println("  5. stop instance                6. create instance        ");
             System.out.println("  7. reboot instance              8. list images            ");
             System.out.println("  9. instance monitoring         10. stop monitoring        ");
-            System.out.println("                                 99. quit                   ");
+            System.out.println(" 11. list security group         12. create security group  ");
+            System.out.println(" 13. delete security group       99. quit                   ");
             System.out.println("------------------------------------------------------------");
             System.out.print("Enter number: ");
 
@@ -92,6 +93,15 @@ public class awsTest {
                     break;
                 case 10:
                     stopMonitorInstances();
+                    break;
+                case 11:
+                    listSecurityGroup();
+                    break;
+                case 12:
+                    createSecurityGroup();
+                    break;
+                case 13:
+                    deleteSecurityGroup();
                     break;
                 case 99:
                     return;
@@ -201,7 +211,7 @@ public class awsTest {
     }
 
     public static void createInstances(){
-        System.out.print("Write your AMI_id : ");
+        System.out.print("Enter your AMI_id : ");
         Scanner amiId = new Scanner(System.in);
         String ami_id = amiId.nextLine();
         RunInstancesRequest run_request = new RunInstancesRequest()
@@ -223,7 +233,7 @@ public class awsTest {
     public static void rebootInstances() {
         final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
 
-        System.out.print("Write your Instance ID : ");
+        System.out.print("Enter your Instance ID : ");
 
         Scanner id_string = new Scanner(System.in);
         String instanceId = id_string.nextLine();
@@ -267,7 +277,7 @@ public class awsTest {
     }
     public static void stopMonitorInstances(){
         final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
-        System.out.print("write your Instance ID : ");
+        System.out.print("Enter your Instance ID : ");
         Scanner id_string = new Scanner(System.in);
         String instanceId = id_string.nextLine();
 
@@ -277,4 +287,60 @@ public class awsTest {
         ec2.unmonitorInstances(request);
         System.out.printf("%s monitoring disabled ", instanceId);
     }
+
+    public static void listSecurityGroup(){
+        System.out.println("Listing Security Groups....");
+        DescribeSecurityGroupsRequest request = new DescribeSecurityGroupsRequest();
+        DescribeSecurityGroupsResult result = ec2.describeSecurityGroups(request);
+
+        for (SecurityGroup group : result.getSecurityGroups()) {
+            System.out.printf(
+                    "[id] %s, " +
+                            "[Name] %s, " +
+                            "[Description] %s, " +
+                            "[Owner] %10s, \n",
+                    group.getGroupId(),
+                    group.getGroupName(),
+                    group.getDescription(),
+                    group.getOwnerId());
+        }
+        System.out.println();
+    }
+
+    public static void createSecurityGroup(){
+        final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
+        System.out.print("Enter group name : ");
+        Scanner groupName = new Scanner(System.in);
+        String group_name = groupName.nextLine();
+
+        System.out.print("Enter group description : ");
+        Scanner groupDesc = new Scanner(System.in);
+        String group_desc = groupDesc.nextLine();
+
+        CreateSecurityGroupRequest create_request = new
+                CreateSecurityGroupRequest()
+                .withGroupName(group_name)
+                .withDescription(group_desc);
+
+        CreateSecurityGroupResult create_response =
+                ec2.createSecurityGroup(create_request);
+
+        System.out.printf("%s Security group is created! ", group_name);
+    }
+
+    public static void deleteSecurityGroup(){
+        final AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
+
+        System.out.print("Enter group id : ");
+        Scanner groupId = new Scanner(System.in);
+        String group_id = groupId.nextLine();
+
+        DeleteSecurityGroupRequest request = new DeleteSecurityGroupRequest()
+                .withGroupId(group_id);
+
+        DeleteSecurityGroupResult response = ec2.deleteSecurityGroup(request);
+        System.out.printf("%s Security group is deleted! ", group_id);
+    }
+
+
 }
