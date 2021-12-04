@@ -43,7 +43,7 @@ public class awsTest {
         Scanner menu = new Scanner(System.in);
         Scanner id_string = new Scanner(System.in);
 
-        int number = 8;
+        int number = 3;
         while (true) {
             System.out.println("                                                            ");
             System.out.println("                                                            ");
@@ -61,7 +61,7 @@ public class awsTest {
             System.out.println("------------------------------------------------------------");
             System.out.print("Enter an integer: ");
 
-            switch (number) {
+            switch (menu.nextInt()) {
                 case 1:
                     listInstances();
                     break;
@@ -82,12 +82,13 @@ public class awsTest {
                     break;
                 case 7:
                     rebootInstances();
+                    break;
                 case 8:
                     listImages();
-                case 99:
                     break;
+                case 99:
+                    return;
             }
-            break;
         }
     }
 
@@ -199,7 +200,7 @@ public class awsTest {
 
         RunInstancesRequest run_request = new RunInstancesRequest()
                 .withImageId(ami_id)
-                .withInstanceType(InstanceType.T1Micro)
+                .withInstanceType(InstanceType.T2Micro)
                 .withMaxCount(1)
                 .withMinCount(1);
 
@@ -233,9 +234,7 @@ public class awsTest {
 
     public static void listImages() {
         System.out.println("Listing Images....");
-        boolean done = false;
-            DescribeImagesRequest request = new DescribeImagesRequest();
-            request.withImageIds("ami-09c22faace9a79e1d");
+            DescribeImagesRequest request = new DescribeImagesRequest().withOwners("self");
             DescribeImagesResult result = ec2.describeImages(request);
 
             for (Image image : result.getImages()) {
